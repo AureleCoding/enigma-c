@@ -11,6 +11,11 @@ int connexion[26] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1
 // Définition des rotors, inverse des rotors et du réflecteur
 int rotor[3][26] = {0};
 int invRotor[3][26] = {0};
+// char textRotor[3][26] = {
+//     {'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J'},
+//     {'A', 'J', 'D', 'K', 'S', 'I', 'R', 'U', 'X', 'B', 'L', 'H', 'W', 'T', 'M', 'C', 'Q', 'G', 'Z', 'N', 'P', 'Y', 'F', 'V', 'O', 'E'},
+//     {'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O'}};
+
 char textRotor[3][26] = {
     {'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J'},
     {'A', 'J', 'D', 'K', 'S', 'I', 'R', 'U', 'X', 'B', 'L', 'H', 'W', 'T', 'M', 'C', 'Q', 'G', 'Z', 'N', 'P', 'Y', 'F', 'V', 'O', 'E'},
@@ -42,13 +47,11 @@ void Text2Value()
 
 void GenerateInvPerm()
 {
-    int value;
     for (int i = 0; i < ROTOR_ROW; i++)
     {
         for (int j = 0; j < ROTOR_COL; j++)
         {
-            value = rotor[i][j];
-            invRotor[i][value] = j;
+            invRotor[i][rotor[i][j]] = j;
         }
     }
 }
@@ -64,6 +67,7 @@ void ConnectCables(int permu)
     {
         do
         {
+            permutationsRemaining = 1;
             printf("Permutation(s) restante(s) %d\n", permu - occu);
 
             printf("lettre 1 : ");
@@ -76,15 +80,22 @@ void ConnectCables(int permu)
             {
                 for (int j = 0; j < 2; j++)
                 {
+
                     if (permutations[i][j] == letter1)
                     {
-                        printf("%c a déjà été permuté\n", letter1);
+                        printf("%c a déjà été permutée\n", letter1);
                         permutationsRemaining = 0;
                     }
 
                     if (permutations[i][j] == letter2)
                     {
-                        printf("%c a déjà été permuté\n", letter2);
+                        printf("%c a déjà été permutée\n", letter2);
+                        permutationsRemaining = 0;
+                    }
+
+                    if (letter1 == letter2)
+                    {
+                        printf("%c ne peux pas être permutée par elle même\n", letter1);
                         permutationsRemaining = 0;
                     }
                 }
@@ -181,11 +192,13 @@ int main()
         if (textInput[i] < 'A' || textInput[i] > 'Z')
         {
             printf("Le texte saisi doit être en majuscules");
+            return 0;
         }
         // Vérifie qu'il n'y a pas d'espaces dans le texte
         if (textInput[i] == ' ')
         {
             printf("Votre texte ne doit pas comporter d'espaces");
+            return 0;
         }
 
         textOutput[i] = Encrypt(textInput[i]);
